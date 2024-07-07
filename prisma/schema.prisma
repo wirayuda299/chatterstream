@@ -1,0 +1,78 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Thread {
+  id            String          @id @default(dbgenerated("uuid_generate_v4()")) @db.VarChar(50)
+  captions      String?
+  type          String?         @default("thread") @db.VarChar(10)
+  author        String          @db.VarChar(100)
+  created_at    DateTime?       @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime?       @default(now()) @db.Timestamptz(6)
+  parent_id     String?         @db.VarChar(50)
+  attachment    Attachment[]
+  bookmarks     Bookmarks[]
+  likes         Likes[]
+  users         User            @relation(fields: [author], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_author_id")
+  thread        Thread?         @relation("threadTothread", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_parent_id")
+  other_thread  Thread[]        @relation("threadTothread")
+  view          View[]
+}
+
+model User {
+  id                                             String          @id @default(uuid()) @db.VarChar(100)
+  username                                       String          @db.VarChar(50)
+  email                                          String          @db.VarChar(100)
+  bio                                            String?         @default("") @db.VarChar(50)
+  image                                          String
+  link                                           String?         @default("")
+  bookmarks                                      Bookmarks[]
+  Likes                                          Likes[]
+  threads                                        Thread[]
+  View                                           View[]
+  followers User[]      @relation("UserFollows")
+  following User[]      @relation("UserFollows")
+}
+
+model View {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.VarChar(50)
+  viewed_by  String    @db.VarChar(100)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  thread_id  String    @db.VarChar(50)
+  thread     Thread    @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_thread_id")
+  user       User      @relation(fields: [viewed_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_viewed_by")
+}
+
+model Likes {
+  liked_by  String @db.VarChar(100)
+  thread_id String @db.VarChar(50)
+  users     User   @relation(fields: [liked_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_liked_id")
+  thread    Thread @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_thread_id")
+
+  @@id([thread_id, liked_by])
+}
+
+model Attachment {
+  id             String @id @default(dbgenerated("uuid_generate_v4()")) @db.VarChar(50)
+  thread_id      String @db.VarChar(50)
+  image_url      String
+  image_asset_id String @db.VarChar(50)
+  thread         Thread @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_thread_id")
+}
+
+model Bookmarks {
+  
+  thread_id String @db.VarChar(50)
+  author    String @db.VarChar(100)
+  users     User   @relation(fields: [author], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_author_id")
+  thread    Thread @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_thread_id")
+  @@id([thread_id, author])
+}
+
+
