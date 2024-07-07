@@ -14,7 +14,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-	metadataBase: new URL(process.env.SITE_URL!),
+	metadataBase: new URL('https://chatterstream.vercel.app'),
 	title: {
 		template: '%s  |  ChatterStream',
 		default: 'ChatterStream',
@@ -23,11 +23,11 @@ export const metadata: Metadata = {
 	openGraph: {
 		title: 'ChatterStream',
 		description: 'ChatterStream build with NextJS 14',
-		url: process.env.SITE_URL!,
 		siteName: 'ChatterStream',
+		url: 'https://chatterstream.vercel.app',
 	},
 	alternates: {
-		canonical: process.env.SITE_URL!,
+		canonical: 'https://chatterstream.vercel.app',
 	},
 	description: 'ChatterStream with Nextjs 14',
 };
