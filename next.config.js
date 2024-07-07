@@ -17,7 +17,8 @@ const nextConfig = {
   env: {
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
     WEBHOOK_SECRET: process.env.WEBHOOK_SECRET,
-    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+    SITE_URL: process.env.SITE_URL
   }
 }
 
